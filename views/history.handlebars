@@ -1,13 +1,34 @@
-<h1>Seu Histórico de Compras</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Compras</title>
+    <link rel="stylesheet" href="/path/to/your/css/styles.css">
+</head>
+<body>
+    <h1>Histórico de Compras</h1>
 
-{{#if purchases.length}}
-    {{#each purchases}}
-        <div>
+    {{#if purchases.length}}
+    <ul>
+        {{#each purchases}}
+        <li>
             <h2>{{this.Ticket.name}}</h2>
             <p>Quantidade: {{this.quantity}}</p>
-            <p>Total Pago: R$ {{this.totalPrice}}</p>
-        </div>
-    {{/each}}
-{{else}}
-    <p>Você ainda não comprou ingressos.</p>
-{{/if}}
+            <p>Preço Total: R$ {{this.totalPrice}}</p>
+            <p>Data da Compra: {{this.createdAt}}</p>
+        </li>
+        {{/each}}
+    </ul>
+    {{else}}
+        <p>⚠️ Nenhuma compra encontrada.</p>
+    {{/if}}
+    <button id="back-to-tickets-button">Voltar aos Ingressos</button>
+
+    <script>
+        document.getElementById('back-to-tickets-button').addEventListener('click', function() {
+            window.location.href = '/tickets';
+        });
+    </script>
+</body>
+</html>

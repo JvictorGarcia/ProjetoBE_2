@@ -61,7 +61,9 @@ const deleteTicket = async (req, res) => {
 const getTickets = async (req, res) => {
   try {
     const tickets = await Ticket.findAll();
-    res.render('tickets', { tickets });
+    const successMessage = req.session.successMessage;
+    delete req.session.successMessage;
+    res.render('tickets', { tickets, successMessage });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar ingressos' });
   }
@@ -81,10 +83,49 @@ const purchaseTicket = async (req, res) => {
     console.log('Atualizando a quantidade de ingressos');
     await ticket.update({ quantity: ticket.quantity - quantity });
     console.log('Compra realizada com sucesso');
-    res.redirect('/history');
+    req.session.successMessage = 'Ingresso comprado com sucesso';
+    res.redirect('/tickets');
   } catch (error) {
     console.error('Erro ao realizar compra:', error);
     res.status(500).json({ error: 'Erro ao realizar compra' });
+  }
+};
+
+const purchaseMultipleTickets = async (req, res) => {
+  const tickets = req.body.tickets;
+  const userId = req.user.id;
+
+  try {
+    for (let i = 0; i < tickets.length; i++) {
+      const { ticketId, quantity } = tickets[i];
+      if (quantity > 0) {
+        const ticket = await Ticket.findByPk(ticketId);
+        if (!ticket || ticket.quantity < quantity) {
+          console.log(`Quantidade solicitada excede o estoque disponível para o ingresso ${ticketId}`);
+          return res.status(400).json({ error: 'Quantidade solicitada excede o estoque disponível' });
+        }
+        const purchase = await Purchase.create({ ticketId, quantity, userId, totalPrice: ticket.price * quantity });
+        await ticket.update({ quantity: ticket.quantity - quantity });
+      }
+    }
+    console.log('Compras realizadas com sucesso');
+    req.session.successMessage = 'Ingressos comprados com sucesso';
+    res.redirect('/tickets');
+  } catch (error) {
+    console.error('Erro ao realizar compras:', error);
+    res.status(500).json({ error: 'Erro ao realizar compras' });
+  }
+};
+
+const getPurchaseHistory = async (req, res) => {
+  try {
+    const purchases = await Purchase.findAll({
+      where: { userId: req.user.id },
+      include: [Ticket]
+    });
+    res.render('history', { purchases });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar histórico de compras' });
   }
 };
 
@@ -96,4 +137,6 @@ module.exports = {
   deleteTicket,
   getTickets,
   purchaseTicket,
+  purchaseMultipleTickets,
+  getPurchaseHistory,
 };

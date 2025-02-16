@@ -1,18 +1,43 @@
-<h1>Ingressos Disponíveis</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingressos Disponíveis</title>
+    <link rel="stylesheet" href="/path/to/your/css/styles.css">
+</head>
+<body>
+    <h1>Ingressos Disponíveis</h1>
 
-{{#if tickets.length}}
-    {{#each tickets}}
+    {{#if successMessage}}
+    <div class="alert alert-success">
+        {{successMessage}}
+    </div>
+    {{/if}}
+
+    {{#if tickets.length}}
+    <form action="/tickets/comprar-multiplos" method="POST">
+        {{#each tickets}}
         <div>
             <h2>{{this.name}}</h2>
             <p>Preço: R$ {{this.price}}</p>
             <p>Disponíveis: {{this.quantity}}</p>
-            <form action="/tickets/comprar" method="POST">
-                <input type="hidden" name="ticketId" value="{{this.id}}">
-                <input type="number" name="quantity" min="1" max="{{this.quantity}}" required>
-                <button type="submit">Comprar</button>
-            </form>
+            <input type="hidden" name="tickets[{{@index}}][ticketId]" value="{{this.id}}">
+            <label for="quantity-{{this.id}}">Quantidade:</label>
+            <input type="number" id="quantity-{{this.id}}" name="tickets[{{@index}}][quantity]" min="0" max="{{this.quantity}}">
         </div>
-    {{/each}}
-{{else}}
-    <p>⚠️ Nenhum ingresso disponível no momento.</p>
-{{/if}}
+        {{/each}}
+        <button type="submit">Comprar</button>
+    </form>
+    {{else}}
+        <p>⚠️ Nenhum ingresso disponível no momento.</p>
+    {{/if}}
+    <button id="view-history-button">Ver Histórico de Compras</button>
+
+    <script>
+        document.getElementById('view-history-button').addEventListener('click', function() {
+            window.location.href = '/history';
+        });
+    </script>
+</body>
+</html>

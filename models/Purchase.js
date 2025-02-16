@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const Ticket = require('./Ticket');
 
 const Purchase = sequelize.define('Purchase', {
   id: {
@@ -28,5 +29,7 @@ const Purchase = sequelize.define('Purchase', {
     allowNull: false,
   },
 });
+
+Purchase.belongsTo(Ticket, { foreignKey: 'ticketId' });
 
 module.exports = Purchase;

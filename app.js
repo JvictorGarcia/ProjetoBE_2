@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session');
 const sequelize = require('./config/database');
 const { engine } = require('express-handlebars');
 const helmet = require('helmet');
@@ -20,7 +21,6 @@ const app = express();
 app.use(morgan('dev'));
 app.use(express.static('public'));
 
-// Configuração de segurança aprimorada
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -50,6 +50,14 @@ app.engine('handlebars', engine({
 app.set('view engine', 'handlebars');
 app.set('views', './views');
 
+// Configuração de sessão
+app.use(session({
+  secret: 'seu_segredo_aqui',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Defina como true se estiver usando HTTPS
+}));
+
 // Limitação de requisições
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -63,39 +71,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Middleware para autenticação via token
-const authenticateToken = (req, res, next) => {
-  let token = req.header('Authorization');
-
-  if (!token) {
-    token = req.cookies.token;
-  } else if (token.startsWith("Bearer ")) {
-    token = token.split(' ')[1];
-  }
-
-  if (!token) {
-    return res.status(401).json({ error: 'Acesso negado. Token não fornecido.' });
-  }
-
-  if (isTokenRevoked(token)) {
-    return res.status(403).json({ error: 'Token revogado.' });
-  }
-
-  try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
-    next();
-  } catch (err) {
-    res.status(403).json({ error: 'Token inválido.' });
-  }
-};
-// Função para verificar se o token foi revogado
 const isTokenRevoked = (token) => {
   // Implemente a lógica para verificar se o token foi revogado
-  // Aqui você pode verificar uma lista de tokens revogados, por exemplo
   return false; // Retorne true se o token foi revogado
 };
 
-const authenticaToken = (req, res, next) => {
+const authenticateToken = (req, res, next) => {
   let token = req.header('Authorization');
 
   if (!token) {
@@ -158,3 +139,5 @@ start();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
+
+module.exports = app;
