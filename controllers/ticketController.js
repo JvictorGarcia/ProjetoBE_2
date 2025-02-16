@@ -72,21 +72,15 @@ const getTickets = async (req, res) => {
 const purchaseTicket = async (req, res) => {
   const { ticketId, quantity } = req.body;
   try {
-    console.log('Iniciando a compra do ingresso');
     const ticket = await Ticket.findByPk(ticketId);
     if (!ticket || ticket.quantity < quantity) {
-      console.log('Quantidade solicitada excede o estoque disponível');
       return res.status(400).json({ error: 'Quantidade solicitada excede o estoque disponível' });
     }
-    console.log('Criando a compra');
     const purchase = await Purchase.create({ ticketId, quantity, userId: req.user.id, totalPrice: ticket.price * quantity });
-    console.log('Atualizando a quantidade de ingressos');
     await ticket.update({ quantity: ticket.quantity - quantity });
-    console.log('Compra realizada com sucesso');
     req.session.successMessage = 'Ingresso comprado com sucesso';
     res.redirect('/tickets');
   } catch (error) {
-    console.error('Erro ao realizar compra:', error);
     res.status(500).json({ error: 'Erro ao realizar compra' });
   }
 };
@@ -101,18 +95,15 @@ const purchaseMultipleTickets = async (req, res) => {
       if (quantity > 0) {
         const ticket = await Ticket.findByPk(ticketId);
         if (!ticket || ticket.quantity < quantity) {
-          console.log(`Quantidade solicitada excede o estoque disponível para o ingresso ${ticketId}`);
           return res.status(400).json({ error: 'Quantidade solicitada excede o estoque disponível' });
         }
         const purchase = await Purchase.create({ ticketId, quantity, userId, totalPrice: ticket.price * quantity });
         await ticket.update({ quantity: ticket.quantity - quantity });
       }
     }
-    console.log('Compras realizadas com sucesso');
     req.session.successMessage = 'Ingressos comprados com sucesso';
     res.redirect('/tickets');
   } catch (error) {
-    console.error('Erro ao realizar compras:', error);
     res.status(500).json({ error: 'Erro ao realizar compras' });
   }
 };
@@ -121,7 +112,10 @@ const getPurchaseHistory = async (req, res) => {
   try {
     const purchases = await Purchase.findAll({
       where: { userId: req.user.id },
-      include: [Ticket]
+      include: [{
+        model: Ticket,
+        attributes: ['name']
+      }]
     });
     res.render('history', { purchases });
   } catch (error) {
