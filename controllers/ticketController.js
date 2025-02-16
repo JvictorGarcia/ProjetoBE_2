@@ -118,8 +118,6 @@ const getPurchaseHistory = async (req, res) => {
       }]
     });
 
-    console.log('Purchases:', purchases); // Log para verificar os dados
-
     // Organizar as compras por tipo de ticket
     const ticketsByType = purchases.reduce((acc, purchase) => {
       const ticketType = purchase.Ticket.name;

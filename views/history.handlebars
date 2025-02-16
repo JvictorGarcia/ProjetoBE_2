@@ -19,6 +19,7 @@
                     <p>Quantidade: {{this.quantity}}</p>
                     <p>Preço Total: R$ {{this.totalPrice}}</p>
                     <p>Data da Compra: {{this.createdAt}}</p>
+                    <button onclick="verDetalhes('{{this.Ticket.id}}')">Ver Detalhes</button>
                 </li>
                 {{/each}}
             </ul>
@@ -26,12 +27,20 @@
     {{else}}
         <p>⚠️ Nenhuma compra encontrada.</p>
     {{/if}}
+
     <button id="back-to-tickets-button">Voltar aos Ingressos</button>
 
     <script>
+        // Botão para voltar à página de ingressos
         document.getElementById('back-to-tickets-button').addEventListener('click', function() {
             window.location.href = '/tickets';
         });
+
+        // Função para ver detalhes do ingresso
+        function verDetalhes(ticketId) {
+            alert('Detalhes do ingresso ID: ' + ticketId);
+            
+        }
     </script>
 </body>
 </html>

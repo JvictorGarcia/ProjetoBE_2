@@ -17,6 +17,8 @@ const createPurchase = async (req, res) => {
 };
 
 const getUserPurchases = async (req, res) => {
+  console.log("🚀 Função getUserPurchases foi chamada!");
+  
   try {
     const purchases = await Purchase.findAll({
       where: { userId: req.user.id },
@@ -26,7 +28,26 @@ const getUserPurchases = async (req, res) => {
       }]
     });
 
-    // Organizar as compras por tipo de ticket
+    res.json(purchases);
+  } catch (error) {
+    console.log("❌ Erro ao buscar compras do usuário:", error.message);
+    res.status(500).json({ error: 'Erro ao buscar compras do usuário' });
+  }
+};
+const getPurchaseHistory = async (req, res) => {
+  console.log("🚀 Função getPurchaseHistory foi chamada! Usuário ID:", req.user.id);
+  
+  try {
+    const purchases = await Purchase.findAll({
+      where: { userId: req.user.id },
+      include: [{
+        model: Ticket,
+        attributes: ['name', 'price', 'createdAt', 'updatedAt']
+      }]
+    });
+
+    console.log("📊 Compras encontradas:", purchases);
+
     const ticketsByType = purchases.reduce((acc, purchase) => {
       const ticketType = purchase.Ticket.name;
       if (!acc[ticketType]) {
@@ -38,11 +59,14 @@ const getUserPurchases = async (req, res) => {
 
     res.render('history', { ticketsByType });
   } catch (error) {
+    console.log("❌ Erro ao buscar histórico de compras:", error.message);
     res.status(500).json({ error: 'Erro ao buscar histórico de compras' });
   }
 };
 
+
 module.exports = {
   createPurchase,
-  getUserPurchases,
+  getUserPurchases, 
+  getPurchaseHistory,
 };

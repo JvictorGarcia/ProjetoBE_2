@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { createPurchase, getUserPurchases } = require('../controllers/purchaseController');
-const authMiddleware = require('../middlewares/authMiddleware');
+const { getPurchaseHistory, purchaseMultipleTickets } = require('../controllers/ticketController');
+const { authenticateToken, isAdmin } = require('../middlewares/authMiddleware');
 const { body, validationResult } = require('express-validator');
 
 // Middleware para validar a compra
@@ -11,7 +12,7 @@ const validatePurchase = [
 ];
 
 // Criar compra com validação
-router.post('/purchase', authMiddleware, validatePurchase, async (req, res) => {
+router.post('/purchase', authenticateToken, validatePurchase, async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -19,7 +20,12 @@ router.post('/purchase', authMiddleware, validatePurchase, async (req, res) => {
   await createPurchase(req, res);
 });
 
+// Comprar múltiplos tickets
+router.post('/comprar-multiplos', authenticateToken, async (req, res) => {
+  await purchaseMultipleTickets(req, res);
+});
+
 // Rota para obter compras do usuário
-router.get('/history', authMiddleware, getUserPurchases);
+router.get('/history', authenticateToken, getPurchaseHistory);
 
 module.exports = router;

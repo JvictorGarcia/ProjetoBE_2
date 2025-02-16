@@ -101,7 +101,8 @@ const authenticateToken = (req, res, next) => {
 // Rotas do sistema
 app.use('/users', userRoutes);
 app.use('/tickets', ticketRoutes);
-app.use('/purchases', purchaseRoutes);
+app.use('/', require('./routes/purchaseRoutes'));
+
 
 // Rota para página inicial
 app.get('/', (req, res) => {

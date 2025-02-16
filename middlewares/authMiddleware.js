@@ -31,4 +31,15 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-module.exports = authenticateToken;
+const isAdmin = (req, res, next) => {
+  if (req.user && req.user.login === 'admin@admin' && req.user.password === 'admin1234') {
+    next();
+  } else {
+    res.status(403).json({ error: 'Acesso negado. Apenas administradores podem realizar esta ação.' });
+  }
+};
+
+module.exports = {
+  authenticateToken,
+  isAdmin,
+};
