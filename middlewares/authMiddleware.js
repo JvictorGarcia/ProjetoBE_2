@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User'); // Modelo de Usuário
 
 const isTokenRevoked = (token) => {
-  return false; // Retorne true se o token foi revogado
+  return false; 
 };
 
 const authenticateToken = (req, res, next) => {

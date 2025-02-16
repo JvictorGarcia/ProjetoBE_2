@@ -20,8 +20,8 @@
         {{#each tickets}}
         <div>
             <h2>{{this.name}}</h2>
-            <p>Preço: R$ {{this.price}}</p>
-            <p>Disponíveis: {{this.quantity}}</p>
+            <p class="textos">Preço: R$ {{this.price}}</p>
+            <p class="textos">Disponíveis: {{this.quantity}}</p>
             <input type="hidden" name="tickets[{{@index}}][ticketId]" value="{{this.id}}">
             <label for="quantity-{{this.id}}">Quantidade:</label>
             <input type="number" id="quantity-{{this.id}}" name="tickets[{{@index}}][quantity]" min="1" max="{{this.quantity}}">
@@ -33,7 +33,7 @@
         <p>⚠️ Nenhum ingresso disponível no momento.</p>
     {{/if}}
 
-    <button id="view-history-button">Ver Histórico de Compras</button>
+    <button id="view-history-button">Histórico de Compras</button>
 
     <script>
         // Redireciona para o histórico de compras
@@ -53,5 +53,6 @@
             return false; // Bloqueia o envio do formulário
         }
     </script>
+    <button onclick="window.location.href='dashboard'">Voltar</button>
 </body>
 </html>

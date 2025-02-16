@@ -14,34 +14,15 @@ const {
 const { authenticateToken, isAdmin } = require('../middlewares/authMiddleware');
 const Ticket = require('../models/Ticket');
 
-// Rotas de ingressos
-router.post('/', authenticateToken, isAdmin, createTicket);
-router.get('/', authenticateToken, getTickets); 
-router.get('/:id', authenticateToken, getTicketById);
-router.put('/:id', authenticateToken, isAdmin, updateTicket);
-router.delete('/:id', authenticateToken, isAdmin, deleteTicket);
-router.post('/comprar', authenticateToken, purchaseTicket);
-router.post('/comprar-multiplos', authenticateToken, purchaseMultipleTickets);
-router.get('/history', authenticateToken, getPurchaseHistory); 
+// ✅ 🔹 Rota para exibir a página de criação de ingressos 
 router.get('/create', authenticateToken, isAdmin, (req, res) => {
     res.render('createTicket');
 });
 
-// Rota para exibir a página de compra de ingressos para usuários comuns
-router.get('/buy', authenticateToken, async (req, res) => {
-    try {
-        const tickets = await Ticket.findAll(); // Buscar todos os ingressos
-        res.render('tickets', { tickets });
-    } catch (error) {
-        res.status(500).json({ error: "Erro ao carregar ingressos." });
-    }
-});
-
-// Rota para exibir a página de gerenciamento de ingressos
+// ✅ 🔹 Rota para gerenciar ingressos (Admin)
 router.get('/manage', authenticateToken, isAdmin, async (req, res) => {
     try {
         const tickets = await Ticket.findAll();
-        console.log("🎟️ Ingressos carregados:", tickets); // 🔥 Log para depuração
         res.render('manageTickets', { tickets });
     } catch (error) {
         console.error("❌ Erro ao carregar ingressos:", error);
@@ -49,8 +30,17 @@ router.get('/manage', authenticateToken, isAdmin, async (req, res) => {
     }
 });
 
+// ✅ 🔹 Rota para exibir os ingressos disponíveis (Usuários comuns)
+router.get('/buy', authenticateToken, async (req, res) => {
+    try {
+        const tickets = await Ticket.findAll();
+        res.render('tickets', { tickets });
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao carregar ingressos." });
+    }
+});
 
-// Rota para criar um novo ingresso
+// ✅ 🔹 Criar um novo ingresso (POST)
 router.post('/create', authenticateToken, isAdmin, async (req, res) => {
     try {
         const { name, price, quantity } = req.body;
@@ -62,22 +52,21 @@ router.post('/create', authenticateToken, isAdmin, async (req, res) => {
     }
 });
 
-// Rota para exibir a página de edição de ingressos
+// ✅ 🔹 Editar um ingresso (GET para exibir formulário)
 router.get('/edit/:id', authenticateToken, isAdmin, async (req, res) => {
     try {
         const ticket = await Ticket.findByPk(req.params.id);
-        if (!ticket) return res.status(404).json({ error: "Ingresso não encontrado." });
-
+        if (!ticket) {
+            console.error("❌ Ingresso não encontrado para edição:", req.params.id);
+            return res.status(404).json({ error: "Ingresso não encontrado." });
+        }
         res.render('editTicket', { ticket });
     } catch (error) {
         res.status(500).json({ error: "Erro ao carregar ingresso." });
     }
 });
 
-router.get('/create', authenticateToken, isAdmin, async (req, res) => {
-    res.render('createTicket');
-})
-// Rota para salvar as alterações
+// ✅ 🔹 Editar um ingresso (POST para salvar alterações)
 router.post('/edit/:id', authenticateToken, isAdmin, async (req, res) => {
     try {
         const { name, price, quantity } = req.body;
@@ -86,13 +75,13 @@ router.post('/edit/:id', authenticateToken, isAdmin, async (req, res) => {
         if (!ticket) return res.status(404).json({ error: "Ingresso não encontrado." });
 
         await ticket.update({ name, price, quantity });
-        res.redirect('/tickets/manage'); // Volta para a página de gerenciamento
+        res.redirect('/tickets/manage');
     } catch (error) {
         res.status(500).json({ error: "Erro ao editar ingresso." });
     }
 });
 
-// Rota para deletar ingressos
+// ✅ 🔹 Deletar ingresso
 router.delete('/delete/:id', authenticateToken, isAdmin, async (req, res) => {
     try {
         const ticket = await Ticket.findByPk(req.params.id);
@@ -104,5 +93,14 @@ router.delete('/delete/:id', authenticateToken, isAdmin, async (req, res) => {
         res.status(500).json({ error: "Erro ao deletar ingresso." });
     }
 });
+
+// ✅ 🔹 Buscar ingressos para usuários comuns
+router.get('/', authenticateToken, getTickets);
+
+// ✅ 🔹 Comprar múltiplos ingressos
+router.post('/comprar-multiplos', authenticateToken, purchaseMultipleTickets);
+
+// ✅ 🔹 Buscar um ingresso específico por ID (DEVE SER A ÚLTIMA ROTA PARA EVITAR CONFLITO!)
+router.get('/:id', authenticateToken, getTicketById);
 
 module.exports = router;

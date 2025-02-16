@@ -1,42 +1,273 @@
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f4f4f4;
+/* Reset básico */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', Arial, sans-serif;
+}
+
+/* Corpo da página */
+body {
+    background: linear-gradient(90deg, rgba(76, 76, 85, 0.92) 0%, rgba(54, 49, 49, 0.99) 35%, rgba(6, 6, 6, 0.98) 100%);
+    color: #333;
+    text-align: center;
+    padding: 20px;
+    line-height: 1.8;
+}
+
+/* Cabeçalhos */
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 15px;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: center;
+}
+.paragrafo{
+    margin-bottom: 15px;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: center;
+}
+.textos{
+    margin-bottom: 15px;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Container principal */
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 40px;
+    background: rgba(76, 76, 85, 0.7);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+.title{
+    margin-bottom: 15px;
+    color: #ffffff;
+    font-weight: 600;
+    text-align: center;  
+}
+/* Links */
+a {
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 12px 24px;
+    margin: 4px;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+a:hover {
+    text-decoration:none;
+    color: #0056b3;
+}
+
+a[href="/users/login"],
+a[href="/users/register"] {
+    background-color: #1b4c6d;
+    color: #fff;
+    transition: all 0.3s ease-in-out;
+}
+
+a[href="/users/login"]:hover,
+a[href="/users/register"]:hover {
+    background-color: #2e2e2e;
+    transform: scale(1.05);
+}
+
+/* Botões */
+button {
+    background-color: #175781;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #2e2e2e;
+    transform: scale(1.05);
+}
+.btn-login{
+    background-color: #175781;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    text-decoration: none;
+}
+.btn-login:hover{
+    background-color: #2e2e2e;
+    transform: scale(1.05);
+}
+
+button[onclick="window.location.href='/'"] {
+    background-color: #5e1414; 
+    color: white; 
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+button[onclick="window.location.href='/'"]:hover {
+    background-color: #1b4c6d;
+    transform: scale(1.05);
+}
+
+button[onclick="window.location.href='dashboard'"] {
+    background-color: #5e1414; 
+    color: white; /* Cor do texto */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+button[onclick="window.location.href='dashboard'"]:hover {
+    background-color: #1b4c6d;
+    transform: scale(1.05);
+}
+.voltar{
+    background-color: #5e1414; 
+    color: white; 
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+.voltar:hover{
+    background-color: #1b4c6d;
+    transform: scale(1.05);
+}
+
+button#logout-btn,
+button[onclick^="deletarIngresso"],
+button[onclick="window.location.href='/dashboard'"] {
+    background-color: #74241b;
+}
+
+button#logout-btn:hover,
+button[onclick^="deletarIngresso"]:hover,
+button[onclick="window.location.href='/dashboard'"]:hover {
+    background-color: #2e2e2e;
+}
+
+/* Formulários */
+form {
+    max-width: 500px;
+    margin: 100px auto;
+    padding: 25px;
+    background: rgb(255, 255, 255);
+    background: linear-gradient(90deg, rgba(76,76,85,0.9248074229691877) 0%, rgba(54,49,49,0.9948354341736695) 35%, rgba(6,6,6,0.9836309523809523) 100%);
+    border: 1px solid black;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #555;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: rgb(255, 255, 255);
+    color: #333; 
+}
+
+
+input:focus {
+    border-color: #0d0d0e;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Listas */
+ul {
+    list-style: none;
     padding: 0;
 }
 
-.container {
-    max-width: 600px;
-    margin: 100px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+li {
+    background: rgba(76, 76, 85, 0.7);
+    margin-bottom: 12px;
+    padding: 18px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    color: #9c9292;
 }
 
-h1 {
-    color: #333;
+li:hover {
+    transform: scale(1.02);
 }
 
-p {
-    font-size: 18px;
+/* Mensagens de erro */
+.error {
+    color: #d9534f;
+    font-weight: bold;
+    margin-bottom: 15px;
 }
 
-.buttons {
-    margin-top: 20px;
+/* Cabeçalho e rodapé */
+.header {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-.btn {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 10px;
-    background: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
+.footer {
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #756666;
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    padding: 10px;
+    
 }
 
-.btn:hover {
-    background: #0056b3;
+/* Responsividade */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    .container {
+        width: 90%;
+        padding: 20px;
+    }
+    h1 {
+        font-size: 24px;
+    }
+    p {
+        font-size: 16px;
+    }
+    a {
+        font-size: 16px;
+        padding: 10px 20px;
+    }
 }

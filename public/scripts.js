@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (myTicketsBtn) {
         myTicketsBtn.addEventListener("click", function () {
-            window.location.href = "/purchases/history"; // 🔥 Corrigido para a rota correta
+            window.location.href = "/history"; 
         });
     }
 
