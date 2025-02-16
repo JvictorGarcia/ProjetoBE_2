@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,39 +8,22 @@
 </head>
 <body>
     <h1>Histórico de Compras</h1>
-
-    {{#if ticketsByType}}
-        {{#each ticketsByType}}
-            <h2>Tipo de Ingresso: {{@key}}</h2>
-            <ul>
-                {{#each this}}
-                <li>
-                    <h3>Nome: {{this.Ticket.name}}</h3>
-                    <p>Quantidade: {{this.quantity}}</p>
-                    <p>Preço Total: R$ {{this.totalPrice}}</p>
-                    <p>Data da Compra: {{this.createdAt}}</p>
-                    <button onclick="verDetalhes('{{this.Ticket.id}}')">Ver Detalhes</button>
-                </li>
-                {{/each}}
-            </ul>
+    
+    {{#if purchases.length}}
+    <ul>
+        {{#each purchases}}
+        <li>
+            <strong>Nome do Ingresso:</strong> {{this.Ticket.name}}<br>
+            <strong>Preço:</strong> R$ {{this.Ticket.price}}<br>
+            <strong>Quantidade Comprada:</strong> {{this.quantity}}<br>
+            <strong>Data da Compra:</strong> {{this.createdAt}}
+        </li>
         {{/each}}
+    </ul>
     {{else}}
-        <p>⚠️ Nenhuma compra encontrada.</p>
+    <p>⚠️ Nenhum ingresso comprado.</p>
     {{/if}}
 
-    <button id="back-to-tickets-button">Voltar aos Ingressos</button>
-
-    <script>
-        // Botão para voltar à página de ingressos
-        document.getElementById('back-to-tickets-button').addEventListener('click', function() {
-            window.location.href = '/tickets';
-        });
-
-        // Função para ver detalhes do ingresso
-        function verDetalhes(ticketId) {
-            alert('Detalhes do ingresso ID: ' + ticketId);
-            
-        }
-    </script>
+    <button onclick="window.location.href='/dashboard'">Voltar ao Dashboard</button>
 </body>
 </html>

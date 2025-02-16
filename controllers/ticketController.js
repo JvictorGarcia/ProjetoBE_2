@@ -118,17 +118,7 @@ const getPurchaseHistory = async (req, res) => {
       }]
     });
 
-    // Organizar as compras por tipo de ticket
-    const ticketsByType = purchases.reduce((acc, purchase) => {
-      const ticketType = purchase.Ticket.name;
-      if (!acc[ticketType]) {
-        acc[ticketType] = [];
-      }
-      acc[ticketType].push(purchase);
-      return acc;
-    }, {});
-
-    res.render('history', { ticketsByType });
+    res.render('history', { purchases });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar histórico de compras' });
   }

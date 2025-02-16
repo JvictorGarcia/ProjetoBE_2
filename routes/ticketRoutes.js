@@ -16,18 +16,26 @@ const Ticket = require('../models/Ticket');
 
 // Rotas de ingressos
 router.post('/', authenticateToken, isAdmin, createTicket);
-router.get('/', authenticateToken, getAllTickets);
+router.get('/', authenticateToken, getTickets); 
 router.get('/:id', authenticateToken, getTicketById);
 router.put('/:id', authenticateToken, isAdmin, updateTicket);
 router.delete('/:id', authenticateToken, isAdmin, deleteTicket);
 router.post('/comprar', authenticateToken, purchaseTicket);
 router.post('/comprar-multiplos', authenticateToken, purchaseMultipleTickets);
-router.get('/history', authenticateToken, getPurchaseHistory);
+router.get('/history', authenticateToken, getPurchaseHistory); 
 router.get('/create', authenticateToken, isAdmin, (req, res) => {
     res.render('createTicket');
 });
 
-
+// Rota para exibir a página de compra de ingressos para usuários comuns
+router.get('/buy', authenticateToken, async (req, res) => {
+    try {
+        const tickets = await Ticket.findAll(); // Buscar todos os ingressos
+        res.render('tickets', { tickets });
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao carregar ingressos." });
+    }
+});
 
 // Rota para exibir a página de gerenciamento de ingressos
 router.get('/manage', authenticateToken, isAdmin, async (req, res) => {
@@ -38,7 +46,6 @@ router.get('/manage', authenticateToken, isAdmin, async (req, res) => {
         res.status(500).json({ error: "Erro ao carregar ingressos." });
     }
 });
-
 
 // Rota para criar um novo ingresso
 router.post('/create', authenticateToken, isAdmin, async (req, res) => {
@@ -51,6 +58,7 @@ router.post('/create', authenticateToken, isAdmin, async (req, res) => {
         res.status(500).json({ error: "Erro ao criar ingresso." });
     }
 });
+
 // Rota para exibir a página de edição de ingressos
 router.get('/edit/:id', authenticateToken, isAdmin, async (req, res) => {
     try {
@@ -90,6 +98,5 @@ router.delete('/delete/:id', authenticateToken, isAdmin, async (req, res) => {
         res.status(500).json({ error: "Erro ao deletar ingresso." });
     }
 });
-
 
 module.exports = router;
