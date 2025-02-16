@@ -1,24 +1,32 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Ticket = sequelize.define('Ticket', {
+const Purchase = sequelize.define('Purchase', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
-  name: {
-    type: DataTypes.STRING,
+  ticketId: {
+    type: DataTypes.UUID,
     allowNull: false,
+    references: {
+      model: 'Tickets',
+      key: 'id',
+    },
   },
-  price: {
-    type: DataTypes.FLOAT,
+  userId: {
+    type: DataTypes.UUID,
     allowNull: false,
   },
   quantity: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  totalPrice: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+  },
 });
 
-module.exports = Ticket;
+module.exports = Purchase;

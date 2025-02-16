@@ -99,6 +99,16 @@ app.get('/', (req, res) => {
   res.render('home');
 });
 
+app.get('/dashboard', authenticateToken, (req, res) => {
+  res.render('dashboard');
+});
+
+app.get('/history', authenticateToken, (req, res) => {
+  // Aqui você vai buscar e passar as compras do usuário logado
+  const purchases = []; // Substitua pelo código para buscar as compras do usuário
+  res.render('history', { purchases });
+});
+
 // Middleware global de tratamento de erros
 app.use(errorHandler);
 

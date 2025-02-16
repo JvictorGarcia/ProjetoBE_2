@@ -1,13 +1,16 @@
-<h2>Login</h2>
-<form id="login-form">
-    <label for="email">E-mail:</label>
+<h1>Login</h1>
+<form action="/users/login" method="post">
+  <div>
+    <label for="email">Email:</label>
     <input type="email" id="email" name="email" required>
-
+  </div>
+  <div>
     <label for="password">Senha:</label>
     <input type="password" id="password" name="password" required>
-
-    <button type="submit">Entrar</button>
+  </div>
+  <button type="submit">Login</button>
 </form>
+<a href="/users/register">Registrar</a>
 
 <p id="error-message" style="color: red;"></p> <!-- Exibe mensagens de erro -->
 

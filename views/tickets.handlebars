@@ -6,7 +6,7 @@
             <h2>{{this.name}}</h2>
             <p>Preço: R$ {{this.price}}</p>
             <p>Disponíveis: {{this.quantity}}</p>
-            <form action="/comprar" method="POST">
+            <form action="/tickets/comprar" method="POST">
                 <input type="hidden" name="ticketId" value="{{this.id}}">
                 <input type="number" name="quantity" min="1" max="{{this.quantity}}" required>
                 <button type="submit">Comprar</button>

@@ -7,7 +7,8 @@ const register = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   try {
     const user = await User.create({ name, email, password: hashedPassword });
-    res.status(201).json(user);
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.render('registerSuccess', { name: user.name, email: user.email, token });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao registrar usuário' });
   }
@@ -21,7 +22,8 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Credenciais inválidas' });
     }
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET);
-    res.json({ token });
+    res.cookie('token', token, { httpOnly: true });
+    res.render('dashboard', { name: user.name, email: user.email });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao fazer login' });
   }
