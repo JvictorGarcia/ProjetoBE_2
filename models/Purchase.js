@@ -1,30 +1,24 @@
-const { DataTypes, Model } = require('sequelize');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-class Purchase extends Model {
-  static init(sequelize) {
-    super.init({
-      id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true
-      },
-      userId: {
-        type: DataTypes.UUID,
-        allowNull: false
-      },
-      ticketId: {
-        type: DataTypes.UUID,
-        allowNull: false
-      },
-      quantity: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-      }
-    }, {
-      sequelize, // 🔹 Agora recebe a instância corretamente
-      modelName: 'Purchase',
-    });
-  }
-}
+const Ticket = sequelize.define('Ticket', {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  price: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+  },
+  quantity: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+});
 
-module.exports = Purchase;
+module.exports = Ticket;

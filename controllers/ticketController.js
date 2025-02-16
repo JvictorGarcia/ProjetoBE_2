@@ -1,49 +1,66 @@
 const Ticket = require('../models/Ticket');
-const { Op } = require('sequelize');
-const { body, validationResult } = require('express-validator');
 
-// 🔹 Middleware para validação de dados
-const validateTicket = [
-  body('name').notEmpty().withMessage('O nome do ingresso é obrigatório.'),
-  body('price').isFloat({ min: 0.01 }).withMessage('O preço deve ser maior que 0.01.'),
-  body('quantity').isInt({ min: 0 }).withMessage('A quantidade deve ser 0 ou maior.'),
-];
-
-// 🔹 Criar ingresso
 const createTicket = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
+  const { name, price, quantity } = req.body;
   try {
-    const { name, price, quantity } = req.body;
     const ticket = await Ticket.create({ name, price, quantity });
     res.status(201).json(ticket);
   } catch (error) {
-    console.error('❌ Erro ao criar ingresso:', error);
-    res.status(500).json({ error: 'Erro ao criar ingresso', details: error.message });
+    res.status(500).json({ error: 'Erro ao criar ingresso' });
   }
 };
 
-// 🔹 Atualizar ingresso
-const updateTicket = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
+const getAllTickets = async (req, res) => {
   try {
-    const { id } = req.params;
-    const ticket = await Ticket.findByPk(id);
-    if (!ticket) return res.status(404).json({ error: 'Ingresso não encontrado' });
-
-    await ticket.update(req.body);
-    res.json({ message: 'Ingresso atualizado' });
+    const tickets = await Ticket.findAll();
+    res.json(tickets);
   } catch (error) {
-    console.error('❌ Erro ao atualizar ingresso:', error);
-    res.status(500).json({ error: 'Erro ao atualizar ingresso', details: error.message });
+    res.status(500).json({ error: 'Erro ao buscar ingressos' });
   }
 };
 
-module.exports = { createTicket, updateTicket, validateTicket };
+const getTicketById = async (req, res) => {
+  try {
+    const ticket = await Ticket.findByPk(req.params.id);
+    if (!ticket) {
+      return res.status(404).json({ error: 'Ingresso não encontrado' });
+    }
+    res.json(ticket);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar ingresso' });
+  }
+};
+
+const updateTicket = async (req, res) => {
+  try {
+    const ticket = await Ticket.findByPk(req.params.id);
+    if (!ticket) {
+      return res.status(404).json({ error: 'Ingresso não encontrado' });
+    }
+    await ticket.update(req.body);
+    res.json(ticket);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao atualizar ingresso' });
+  }
+};
+
+const deleteTicket = async (req, res) => {
+  try {
+    const ticket = await Ticket.findByPk(req.params.id);
+    if (!ticket) {
+      return res.status(404).json({ error: 'Ingresso não encontrado' });
+    }
+    await ticket.destroy();
+    res.json({ message: 'Ingresso deletado' });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao deletar ingresso' });
+  }
+};
+
+module.exports = {
+  createTicket,
+  getAllTickets,
+  getTicketById,
+  updateTicket,
+  deleteTicket,
+};

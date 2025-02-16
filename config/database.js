@@ -12,10 +12,6 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
 
 module.exports = sequelize;
 
-
-module.exports = sequelize;
-
-
 // Função para tentar conectar com reconexão automática
 const connectDB = async (retries = 5) => {
   while (retries) {
@@ -38,5 +34,3 @@ const connectDB = async (retries = 5) => {
 
 // Inicia a conexão
 connectDB();
-
-module.exports = sequelize;

@@ -1,55 +1,33 @@
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { body, validationResult } = require('express-validator');
+const User = require('../models/User');
 
-// 🔹 Middleware de validação
-const validateUserRegistration = [
-  body('email').isEmail().withMessage('E-mail inválido'),
-  body('password').isLength({ min: 8 }).withMessage('A senha deve ter pelo menos 8 caracteres'),
-  body('name').notEmpty().withMessage('O nome é obrigatório')
-];
-
-// 🔹 Cadastro de usuário
 const register = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-
+  const { name, email, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
   try {
-    const { name, email, password } = req.body;
-
-    const userExists = await User.findOne({ where: { email } });
-    if (userExists) return res.status(400).json({ error: 'Email já cadastrado!' });
-
-    const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hashedPassword });
-
-    res.status(201).json({ message: 'Usuário cadastrado com sucesso!' });
+    res.status(201).json(user);
   } catch (error) {
-    console.error('❌ Erro ao registrar usuário:', error);
-    res.status(500).json({ error: 'Erro ao registrar usuário', details: error.message });
+    res.status(500).json({ error: 'Erro ao registrar usuário' });
   }
 };
 
-// 🔹 Login de usuário
 const login = async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const { email, password } = req.body;
-
     const user = await User.findOne({ where: { email } });
-    if (!user) return res.status(401).json({ error: 'Email ou senha inválidos' });
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: 'Email ou senha inválidos' });
-
-    const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    res.json({ message: 'Login bem-sucedido!', token });
+    if (!user || !await bcrypt.compare(password, user.password)) {
+      return res.status(401).json({ error: 'Credenciais inválidas' });
+    }
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET);
+    res.json({ token });
   } catch (error) {
-    console.error('❌ Erro ao realizar login:', error);
-    res.status(500).json({ error: 'Erro ao realizar login' });
+    res.status(500).json({ error: 'Erro ao fazer login' });
   }
 };
 
-// 🔹 Exportação correta
-module.exports = { register, login, validateUserRegistration };
+module.exports = {
+  register,
+  login,
+};
