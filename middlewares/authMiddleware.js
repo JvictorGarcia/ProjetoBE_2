@@ -1,11 +1,27 @@
 const jwt = require('jsonwebtoken');
 
-const authMiddleware = (req, res, next) => {
-  const token = req.header('Authorization')?.split(' ')[1] || req.cookies.token;
+const isTokenRevoked = (token) => {
+  // Implemente a lógica para verificar se o token foi revogado
+  return false; // Retorne true se o token foi revogado
+};
+
+const authenticateToken = (req, res, next) => {
+  let token = req.header('Authorization');
+
+  if (!token) {
+    token = req.cookies.token;
+  } else if (token.startsWith("Bearer ")) {
+    token = token.split(' ')[1];
+  }
+
   if (!token) {
     return res.status(401).json({ error: 'Acesso negado. Token não fornecido.' });
   }
-  
+
+  if (isTokenRevoked(token)) {
+    return res.status(403).json({ error: 'Token revogado.' });
+  }
+
   try {
     const verified = jwt.verify(token, process.env.JWT_SECRET);
     req.user = verified;
@@ -15,4 +31,4 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+module.exports = authenticateToken;

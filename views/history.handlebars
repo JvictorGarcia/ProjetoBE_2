@@ -9,17 +9,20 @@
 <body>
     <h1>Histórico de Compras</h1>
 
-    {{#if purchases.length}}
-    <ul>
-        {{#each purchases}}
-        <li>
-            <h2>{{this.Ticket.name}}</h2>
-            <p>Quantidade: {{this.quantity}}</p>
-            <p>Preço Total: R$ {{this.totalPrice}}</p>
-            <p>Data da Compra: {{this.createdAt}}</p>
-        </li>
+    {{#if ticketsByType}}
+        {{#each ticketsByType}}
+            <h2>Tipo de Ingresso: {{@key}}</h2>
+            <ul>
+                {{#each this}}
+                <li>
+                    <h3>Nome: {{this.Ticket.name}}</h3>
+                    <p>Quantidade: {{this.quantity}}</p>
+                    <p>Preço Total: R$ {{this.totalPrice}}</p>
+                    <p>Data da Compra: {{this.createdAt}}</p>
+                </li>
+                {{/each}}
+            </ul>
         {{/each}}
-    </ul>
     {{else}}
         <p>⚠️ Nenhuma compra encontrada.</p>
     {{/if}}

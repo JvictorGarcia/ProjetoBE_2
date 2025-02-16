@@ -114,10 +114,21 @@ const getPurchaseHistory = async (req, res) => {
       where: { userId: req.user.id },
       include: [{
         model: Ticket,
-        attributes: ['name']
+        attributes: ['name', 'price', 'createdAt', 'updatedAt']
       }]
     });
-    res.render('history', { purchases });
+
+    // Organizar as compras por tipo de ticket
+    const ticketsByType = purchases.reduce((acc, purchase) => {
+      const ticketType = purchase.Ticket.name;
+      if (!acc[ticketType]) {
+        acc[ticketType] = [];
+      }
+      acc[ticketType].push(purchase);
+      return acc;
+    }, {});
+
+    res.render('history', { ticketsByType });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar histórico de compras' });
   }
