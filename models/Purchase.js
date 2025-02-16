@@ -12,7 +12,7 @@ const Purchase = sequelize.define('Purchase', {
     type: DataTypes.UUID,
     allowNull: false,
     references: {
-      model: Ticket, 
+      model: Ticket,
       key: 'id',
     },
   },

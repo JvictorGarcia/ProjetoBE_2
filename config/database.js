@@ -31,12 +31,12 @@ const initDb = async () => {
     const adminExists = await User.findOne({ where: { email: 'admin@admin.com' } });
 
     if (!adminExists) {
-      const hashedPassword = await bcrypt.hash('admin1234', 10); // 🔥 Agora a senha será criptografada
+      const hashedPassword = await bcrypt.hash('admin1234', 10);
 
       await User.create({
         name: 'Admin',
         email: 'admin@admin.com',
-        password: hashedPassword, // 🔹 Senha armazenada de forma segura
+        password: hashedPassword,
         role: 'admin',
       });
 

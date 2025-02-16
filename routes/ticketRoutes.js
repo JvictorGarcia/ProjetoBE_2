@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { 
-  createTicket, 
-  getAllTickets, 
-  getTicketById, 
-  updateTicket, 
-  deleteTicket, 
-  getTickets, 
-  purchaseTicket, 
-  purchaseMultipleTickets, 
-  getPurchaseHistory 
+const {
+    createTicket,
+    getAllTickets,
+    getTicketById,
+    updateTicket,
+    deleteTicket,
+    getTickets,
+    purchaseTicket,
+    purchaseMultipleTickets,
+    getPurchaseHistory
 } = require('../controllers/ticketController');
 const { authenticateToken, isAdmin } = require('../middlewares/authMiddleware');
 const Ticket = require('../models/Ticket');
@@ -46,7 +46,7 @@ router.post('/create', authenticateToken, isAdmin, async (req, res) => {
         const { name, price, quantity } = req.body;
         await Ticket.create({ name, price, quantity });
 
-        res.redirect('/tickets/manage'); 
+        res.redirect('/tickets/manage');
     } catch (error) {
         res.status(500).json({ error: "Erro ao criar ingresso." });
     }
@@ -100,7 +100,7 @@ router.get('/', authenticateToken, getTickets);
 // ✅ 🔹 Comprar múltiplos ingressos
 router.post('/comprar-multiplos', authenticateToken, purchaseMultipleTickets);
 
-// ✅ 🔹 Buscar um ingresso específico por ID (DEVE SER A ÚLTIMA ROTA PARA EVITAR CONFLITO!)
+// ✅ 🔹 Buscar um ingresso específico por ID 
 router.get('/:id', authenticateToken, getTicketById);
 
 module.exports = router;

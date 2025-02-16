@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createPurchase, getUserPurchases } = require('../controllers/purchaseController');
+const { createPurchase, getUserPurchases } = require('../controllers/PurchaseController');
 const { getPurchaseHistory, purchaseMultipleTickets } = require('../controllers/ticketController');
 const { authenticateToken, isAdmin } = require('../middlewares/authMiddleware');
 const { body, validationResult } = require('express-validator');
@@ -29,7 +29,7 @@ router.post('/comprar-multiplos', authenticateToken, async (req, res) => {
 router.get('/history', authenticateToken, getPurchaseHistory);
 
 router.get('/compras', authenticateToken, (req, res) => {
-  res.redirect('/history'); 
+  res.redirect('/history');
 });
 
 

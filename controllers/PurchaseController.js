@@ -4,7 +4,7 @@ const Ticket = require('../models/Ticket');
 const createPurchase = async (req, res) => {
   const { ticketId, quantity } = req.body;
   try {
-  
+
     if (!quantity || quantity <= 0) {
       return res.status(400).json({ error: 'Selecione uma quantidade válida para compra' });
     }
@@ -18,7 +18,7 @@ const createPurchase = async (req, res) => {
     await ticket.update({ quantity: ticket.quantity - quantity });
 
     req.session.successMessage = 'Ingressos comprados com sucesso';
-    res.redirect('/tickets'); 
+    res.redirect('/tickets');
   } catch (error) {
     res.status(500).json({ error: 'Erro ao realizar compra' });
   }
@@ -68,6 +68,6 @@ const getPurchaseHistory = async (req, res) => {
 
 module.exports = {
   createPurchase,
-  getUserPurchases, 
+  getUserPurchases,
   getPurchaseHistory,
 };

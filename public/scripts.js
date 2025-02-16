@@ -5,23 +5,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (buyTicketBtn) {
         buyTicketBtn.addEventListener("click", function () {
-            window.location.href = "/tickets"; 
+            window.location.href = "/tickets";
         });
     }
 
     if (myTicketsBtn) {
         myTicketsBtn.addEventListener("click", function () {
-            window.location.href = "/history"; 
+            window.location.href = "/history";
         });
     }
 
     if (logoutBtn) {
         logoutBtn.addEventListener("click", function () {
-            fetch('/users/logout', { method: 'GET' }) // 🔥 Corrigido para GET e rota correta
+            fetch('/users/logout', { method: 'GET' })
                 .then(response => {
                     if (response.ok) {
                         localStorage.removeItem("token");
-                        window.location.href = "/"; // 🔥 Agora redireciona para home.handlebars
+                        window.location.href = "/";
                     } else {
                         console.error("Erro ao fazer logout");
                     }

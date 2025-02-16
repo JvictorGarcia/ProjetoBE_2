@@ -1,3 +1,4 @@
+// Importa módulos necessários
 const express = require('express');
 const session = require('express-session');
 const sequelize = require('./config/database');
@@ -14,29 +15,36 @@ const userRoutes = require('./routes/userRoutes');
 const ticketRoutes = require('./routes/ticketRoutes');
 const purchaseRoutes = require('./routes/purchaseRoutes');
 
+// Carrega variáveis de ambiente
 dotenv.config();
 
+// Cria uma instância do Express
 const app = express();
 
+// Middleware de log de requisições
 app.use(morgan('dev'));
+
+// Define a pasta pública para arquivos estáticos
 app.use(express.static('public'));
 
+// Configurações de segurança com Helmet
 app.use(helmet({
-  contentSecurityPolicy: false, // Desativar CSP
-  xssFilter: false // Desativar X-XSS-Protection
+  contentSecurityPolicy: false, // Desativa CSP
+  xssFilter: false // Desativa X-XSS-Protection
 }));
 
+// Habilita CORS (Cross-Origin Resource Sharing)
 app.use(cors());
 app.use(cookieParser());
 
-// Remover cabeçalhos desnecessários
+// Remove cabeçalhos desnecessários
 app.use((req, res, next) => {
   res.removeHeader('Content-Security-Policy');
   res.removeHeader('X-XSS-Protection');
   next();
 });
 
-// Configuração do Handlebars
+// Configuração do Handlebars como motor de visualização
 app.engine('handlebars', engine({
   runtimeOptions: {
     allowProtoPropertiesByDefault: true,
@@ -48,16 +56,16 @@ app.set('views', './views');
 
 // Configuração de sessão
 app.use(session({
-  secret: 'seu_segredo_aqui',
+  secret: 'seu_segredo_aqui', // Substitua por um segredo seguro
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false } // Defina como true se estiver usando HTTPS
 }));
 
-// Limitação de requisições
+// Limitação de requisições para evitar abuso
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100, // Limite de 100 requisições por janela de tempo
   message: 'Muitas requisições feitas. Tente novamente mais tarde.'
 });
 app.use(limiter);
@@ -103,38 +111,18 @@ app.use('/users', userRoutes);
 app.use('/tickets', ticketRoutes);
 app.use('/', require('./routes/purchaseRoutes'));
 
-
 // Rota para página inicial
 app.get('/', (req, res) => {
   res.render('home');
 });
 
+// Rota para dashboard, requer autenticação
 app.get('/dashboard', authenticateToken, (req, res) => {
   res.render('dashboard');
 });
 
-app.get('/history', authenticateToken, (req, res) => {
-  // Aqui você vai buscar e passar as compras do usuário logado
-  const purchases = []; // Substitua pelo código para buscar as compras do usuário
-  res.render('history', { purchases });
-});
-
-// Middleware global de tratamento de erros
-app.use(errorHandler);
-
-// Iniciar o servidor
-const start = async () => {
-  try {
-    await sequelize.sync(); // Usar migrações ao invés de sync({ alter: true })
-    console.log('✅ Banco de dados sincronizado');
-  } catch (error) {
-    console.error('❌ Erro ao conectar ao banco de dados:', error);
-  }
-};
-
-start();
-
+// Inicia o servidor na porta definida em variáveis de ambiente ou 3000
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
-
-module.exports = app;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});

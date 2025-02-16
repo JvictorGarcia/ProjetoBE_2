@@ -18,29 +18,29 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-      const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email } });
 
-      if (!user) {
-          return res.render('login', { error: 'Credenciais inválidas' });
-      }
+    if (!user) {
+      return res.render('login', { error: 'Credenciais inválidas' });
+    }
 
-      const validPassword = await bcrypt.compare(password, user.password);
+    const validPassword = await bcrypt.compare(password, user.password);
 
-      if (!validPassword) {
-          return res.render('login', { error: 'Credenciais inválidas' });
-      }
+    if (!validPassword) {
+      return res.render('login', { error: 'Credenciais inválidas' });
+    }
 
-      const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-      res.cookie('token', token, { httpOnly: true });
+    res.cookie('token', token, { httpOnly: true });
 
-      if (user.role === 'admin') {
-          return res.redirect('/tickets/manage');
-      } else {
-          return res.redirect('/dashboard');
-      }
+    if (user.role === 'admin') {
+      return res.redirect('/tickets/manage');
+    } else {
+      return res.redirect('/dashboard');
+    }
   } catch (error) {
-      res.status(500).json({ error: 'Erro ao fazer login' });
+    res.status(500).json({ error: 'Erro ao fazer login' });
   }
 };
 

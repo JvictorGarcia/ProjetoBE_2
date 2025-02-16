@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // Modelo de Usuário
+const User = require('../models/User');
 
 const isTokenRevoked = (token) => {
-  return false; 
+  return false;
 };
 
 const authenticateToken = (req, res, next) => {
@@ -33,7 +33,7 @@ const authenticateToken = (req, res, next) => {
 
 const isAdmin = async (req, res, next) => {
   try {
-    
+
     const user = await User.findByPk(req.user.id);
 
     if (!user) {
@@ -44,7 +44,7 @@ const isAdmin = async (req, res, next) => {
       return res.status(403).json({ error: 'Acesso negado. Apenas administradores podem realizar esta ação.' });
     }
 
-    next(); 
+    next();
   } catch (error) {
     res.status(500).json({ error: 'Erro ao verificar o usuário.' });
   }

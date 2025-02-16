@@ -15,9 +15,9 @@ router.get('/login', (req, res) => {
 
 // 🔹 Rota para deslogar o usuário
 router.get('/logout', (req, res) => {
-  res.clearCookie('token'); 
-  req.session.destroy(() => { 
-      res.redirect('/'); 
+  res.clearCookie('token');
+  req.session.destroy(() => {
+    res.redirect('/');
   });
 });
 
