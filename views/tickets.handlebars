@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +16,7 @@
     {{/if}}
 
     {{#if tickets.length}}
-    <form action="/tickets/comprar-multiplos" method="POST">
+    <form action="/tickets/comprar-multiplos" method="POST" onsubmit="return validarCompra()">
         {{#each tickets}}
         <div>
             <h2>{{this.name}}</h2>
@@ -24,7 +24,7 @@
             <p>Disponíveis: {{this.quantity}}</p>
             <input type="hidden" name="tickets[{{@index}}][ticketId]" value="{{this.id}}">
             <label for="quantity-{{this.id}}">Quantidade:</label>
-            <input type="number" id="quantity-{{this.id}}" name="tickets[{{@index}}][quantity]" min="0" max="{{this.quantity}}">
+            <input type="number" id="quantity-{{this.id}}" name="tickets[{{@index}}][quantity]" min="1" max="{{this.quantity}}">
         </div>
         {{/each}}
         <button type="submit">Comprar</button>
@@ -32,12 +32,26 @@
     {{else}}
         <p>⚠️ Nenhum ingresso disponível no momento.</p>
     {{/if}}
+
     <button id="view-history-button">Ver Histórico de Compras</button>
 
     <script>
+        // Redireciona para o histórico de compras
         document.getElementById('view-history-button').addEventListener('click', function() {
             window.location.href = '/history';
         });
+
+        // Valida se pelo menos um ingresso foi selecionado antes de enviar
+        function validarCompra() {
+            let inputs = document.querySelectorAll('input[type="number"]');
+            for (let input of inputs) {
+                if (input.value > 0) {
+                    return true; // Permite a compra se houver pelo menos um ingresso selecionado
+                }
+            }
+            alert("Selecione pelo menos um ingresso para comprar.");
+            return false; // Bloqueia o envio do formulário
+        }
     </script>
 </body>
 </html>

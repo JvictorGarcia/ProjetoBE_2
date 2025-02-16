@@ -14,11 +14,15 @@ const createTicket = async (req, res) => {
 const getAllTickets = async (req, res) => {
   try {
     const tickets = await Ticket.findAll();
-    res.json(tickets);
+    console.log("📢 Tickets carregados para gerenciar:", tickets); // 🔥 Verificar se os ingressos são encontrados
+    res.render('manageTickets', { tickets });
   } catch (error) {
+    console.error("❌ Erro ao buscar ingressos:", error);
     res.status(500).json({ error: 'Erro ao buscar ingressos' });
   }
 };
+
+
 
 const getTicketById = async (req, res) => {
   try {
@@ -72,18 +76,26 @@ const getTickets = async (req, res) => {
 const purchaseTicket = async (req, res) => {
   const { ticketId, quantity } = req.body;
   try {
+    // 🔥 Nova validação: Bloqueia compra sem quantidade válida
+    if (!quantity || quantity <= 0) {
+      return res.status(400).json({ error: 'Selecione uma quantidade válida para compra' });
+    }
+
     const ticket = await Ticket.findByPk(ticketId);
     if (!ticket || ticket.quantity < quantity) {
       return res.status(400).json({ error: 'Quantidade solicitada excede o estoque disponível' });
     }
+
     const purchase = await Purchase.create({ ticketId, quantity, userId: req.user.id, totalPrice: ticket.price * quantity });
     await ticket.update({ quantity: ticket.quantity - quantity });
-    req.session.successMessage = 'Ingresso comprado com sucesso';
+
+    req.session.successMessage = 'Ingressos comprados com sucesso';
     res.redirect('/tickets');
   } catch (error) {
     res.status(500).json({ error: 'Erro ao realizar compra' });
   }
 };
+
 
 const purchaseMultipleTickets = async (req, res) => {
   const tickets = req.body.tickets;

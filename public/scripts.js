@@ -11,17 +11,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (myTicketsBtn) {
         myTicketsBtn.addEventListener("click", function () {
-            window.location.href = "/compras"; 
+            window.location.href = "/purchases/history"; // 🔥 Corrigido para a rota correta
         });
     }
 
     if (logoutBtn) {
         logoutBtn.addEventListener("click", function () {
-            fetch('/logout', { method: 'POST' })
+            fetch('/users/logout', { method: 'GET' }) // 🔥 Corrigido para GET e rota correta
                 .then(response => {
                     if (response.ok) {
                         localStorage.removeItem("token");
-                        window.location.href = "/login";
+                        window.location.href = "/"; // 🔥 Agora redireciona para home.handlebars
                     } else {
                         console.error("Erro ao fazer logout");
                     }

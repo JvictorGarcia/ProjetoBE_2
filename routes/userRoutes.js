@@ -13,4 +13,13 @@ router.get('/login', (req, res) => {
   res.render('login');
 });
 
+// 🔹 Rota para deslogar o usuário
+router.get('/logout', (req, res) => {
+  res.clearCookie('token'); 
+  req.session.destroy(() => { 
+      res.redirect('/'); 
+  });
+});
+
+
 module.exports = router;

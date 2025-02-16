@@ -28,4 +28,9 @@ router.post('/comprar-multiplos', authenticateToken, async (req, res) => {
 // Rota para obter compras do usuário
 router.get('/history', authenticateToken, getPurchaseHistory);
 
+router.get('/compras', authenticateToken, (req, res) => {
+  res.redirect('/history'); 
+});
+
+
 module.exports = router;

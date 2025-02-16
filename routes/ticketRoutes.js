@@ -40,12 +40,15 @@ router.get('/buy', authenticateToken, async (req, res) => {
 // Rota para exibir a página de gerenciamento de ingressos
 router.get('/manage', authenticateToken, isAdmin, async (req, res) => {
     try {
-        const tickets = await Ticket.findAll(); // Buscar todos os ingressos
+        const tickets = await Ticket.findAll();
+        console.log("🎟️ Ingressos carregados:", tickets); // 🔥 Log para depuração
         res.render('manageTickets', { tickets });
     } catch (error) {
+        console.error("❌ Erro ao carregar ingressos:", error);
         res.status(500).json({ error: "Erro ao carregar ingressos." });
     }
 });
+
 
 // Rota para criar um novo ingresso
 router.post('/create', authenticateToken, isAdmin, async (req, res) => {
@@ -53,7 +56,7 @@ router.post('/create', authenticateToken, isAdmin, async (req, res) => {
         const { name, price, quantity } = req.body;
         await Ticket.create({ name, price, quantity });
 
-        res.redirect('/tickets/manage'); // Redireciona para a página de gerenciamento após criar
+        res.redirect('/tickets/manage'); 
     } catch (error) {
         res.status(500).json({ error: "Erro ao criar ingresso." });
     }
@@ -71,6 +74,9 @@ router.get('/edit/:id', authenticateToken, isAdmin, async (req, res) => {
     }
 });
 
+router.get('/create', authenticateToken, isAdmin, async (req, res) => {
+    res.render('createTicket');
+})
 // Rota para salvar as alterações
 router.post('/edit/:id', authenticateToken, isAdmin, async (req, res) => {
     try {
