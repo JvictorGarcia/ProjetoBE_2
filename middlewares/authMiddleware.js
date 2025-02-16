@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User'); // Modelo de Usuário
 
 const isTokenRevoked = (token) => {
-  // Implemente a lógica para verificar se o token foi revogado
   return false; // Retorne true se o token foi revogado
 };
 
@@ -31,11 +31,22 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-const isAdmin = (req, res, next) => {
-  if (req.user && req.user.login === 'admin@admin' && req.user.password === 'admin1234') {
-    next();
-  } else {
-    res.status(403).json({ error: 'Acesso negado. Apenas administradores podem realizar esta ação.' });
+const isAdmin = async (req, res, next) => {
+  try {
+    
+    const user = await User.findByPk(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
+
+    if (user.role !== 'admin') {
+      return res.status(403).json({ error: 'Acesso negado. Apenas administradores podem realizar esta ação.' });
+    }
+
+    next(); 
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao verificar o usuário.' });
   }
 };
 

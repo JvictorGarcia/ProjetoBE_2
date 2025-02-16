@@ -1,9 +1,10 @@
 const { Sequelize } = require('sequelize');
+const bcrypt = require('bcrypt'); // 🔹 Importar bcrypt para criptografar senhas
 require('dotenv').config();
 
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, {
   host: process.env.DB_HOST,
-  dialect: 'mysql',
+  dialect: process.env.DB_DIALECT,
   logging: false,
   dialectOptions: {
     connectTimeout: 10000,
@@ -12,25 +13,49 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
 
 module.exports = sequelize;
 
-// Função para tentar conectar com reconexão automática
-const connectDB = async (retries = 5) => {
-  while (retries) {
-    try {
-      await sequelize.authenticate();
-      console.log('✅ Conexão com o banco de dados estabelecida com sucesso.');
-      if (process.env.NODE_ENV === 'development') {
-        await sequelize.sync(); // Melhor usar migrações ao invés de alter:true
-        console.log('📌 Modelos sincronizados.');
-      }
-      return;
-    } catch (error) {
-      console.error(`❌ Erro ao conectar ao banco (${6 - retries}ª tentativa):`, error);
-      retries -= 1;
-      if (!retries) process.exit(1); // Sai do processo após 5 tentativas
-      await new Promise(res => setTimeout(res, 5000)); // Espera 5s antes da próxima tentativa
+// Agora importamos os modelos depois de exportar o sequelize
+const User = require('../models/User');
+const Ticket = require('../models/Ticket');
+const Purchase = require('../models/Purchase');
+
+const initDb = async () => {
+  try {
+    console.log("🔄 Sincronizando banco de dados...");
+
+    // 🔹 Atualiza a estrutura das tabelas sem excluir os dados existentes
+    await sequelize.sync({ alter: true });
+
+    console.log('✅ Banco de dados sincronizado com sucesso.');
+
+    // 🔹 Criar usuário administrador apenas se ele ainda não existir
+    const adminExists = await User.findOne({ where: { email: 'admin@admin.com' } });
+
+    if (!adminExists) {
+      const hashedPassword = await bcrypt.hash('admin1234', 10); // 🔥 Agora a senha será criptografada
+
+      await User.create({
+        name: 'Admin',
+        email: 'admin@admin.com',
+        password: hashedPassword, // 🔹 Senha armazenada de forma segura
+        role: 'admin',
+      });
+
+      console.log('👤 Usuário administrador criado com sucesso.');
     }
+  } catch (error) {
+    console.error('❌ Erro ao inicializar o banco de dados:', error);
   }
 };
 
-// Inicia a conexão
+// Conectar ao banco
+const connectDB = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('✅ Conexão com o banco de dados estabelecida com sucesso.');
+    await initDb();
+  } catch (error) {
+    console.error('❌ Erro ao conectar ao banco de dados:', error);
+  }
+};
+
 connectDB();

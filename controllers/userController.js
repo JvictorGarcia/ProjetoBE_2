@@ -18,16 +18,25 @@ const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ where: { email } });
-    if (!user || !await bcrypt.compare(password, user.password)) {
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ error: 'Credenciais inválidas' });
     }
+
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET);
     res.cookie('token', token, { httpOnly: true });
-    res.render('dashboard', { name: user.name, email: user.email });
+
+    // 🔹 Verifica o tipo de usuário e renderiza a página correta
+    if (user.role === 'admin') {
+      res.render('manageTickets', { name: user.name, email: user.email });
+    } else {
+      res.render('dashboard', { name: user.name, email: user.email });
+    }
   } catch (error) {
     res.status(500).json({ error: 'Erro ao fazer login' });
   }
 };
+
 
 module.exports = {
   register,

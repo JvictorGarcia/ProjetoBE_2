@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Ingressos</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <h1>Gerenciar Ingressos</h1>
+
+    <button onclick="window.location.href='/tickets/create'">Criar Novo Ingresso</button>
+
+    <h2>Ingressos Disponíveis</h2>
+   {{#if tickets.length}}
+    <ul>
+        {{#each tickets}}
+            <li>
+                <strong>Nome:</strong> {{this.name}}<br>
+                <strong>Preço:</strong> R$ {{this.price}}<br>
+                <strong>Quantidade:</strong> {{this.quantity}}<br>
+
+                <button onclick="window.location.href='/tickets/edit/{{this.id}}'">✏️ Editar</button>
+                <button onclick="deletarIngresso('{{this.id}}')">🗑️ Deletar</button>
+            </li>
+        {{/each}}
+    </ul>
+{{else}}
+    <p>⚠️ Nenhum ingresso disponível.</p>
+{{/if}}
+
+    <script>
+        function deletarIngresso(ticketId) {
+            if (confirm("Tem certeza que deseja deletar este ingresso?")) {
+                fetch(`/tickets/delete/${ticketId}`, { method: "DELETE" })
+                .then(() => window.location.reload())
+                .catch(err => alert("Erro ao deletar ingresso"));
+            }
+        }
+    </script>
+</body>
+</html>
