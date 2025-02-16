@@ -20,8 +20,6 @@ router.post('/purchase', authMiddleware, validatePurchase, async (req, res) => {
 });
 
 // Rota para obter compras do usuário
-router.get('/history', authMiddleware, async (req, res) => {
-  await getUserPurchases(req, res);
-});
+router.get('/history', authMiddleware, getUserPurchases);
 
 module.exports = router;

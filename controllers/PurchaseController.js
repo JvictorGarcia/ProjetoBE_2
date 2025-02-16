@@ -8,7 +8,7 @@ const createPurchase = async (req, res) => {
     if (!ticket || ticket.quantity < quantity) {
       return res.status(400).json({ error: 'Quantidade solicitada excede o estoque disponível' });
     }
-    const purchase = await Purchase.create({ ticketId, quantity, userId: req.user.id });
+    const purchase = await Purchase.create({ ticketId, quantity, userId: req.user.id, totalPrice: ticket.price * quantity });
     await ticket.update({ quantity: ticket.quantity - quantity });
     res.status(201).json(purchase);
   } catch (error) {
@@ -18,8 +18,25 @@ const createPurchase = async (req, res) => {
 
 const getUserPurchases = async (req, res) => {
   try {
-    const purchases = await Purchase.findAll({ where: { userId: req.user.id } });
-    res.json(purchases);
+    const purchases = await Purchase.findAll({
+      where: { userId: req.user.id },
+      include: [{
+        model: Ticket,
+        attributes: ['name', 'price', 'createdAt', 'updatedAt']
+      }]
+    });
+
+    // Organizar as compras por tipo de ticket
+    const ticketsByType = purchases.reduce((acc, purchase) => {
+      const ticketType = purchase.Ticket.name;
+      if (!acc[ticketType]) {
+        acc[ticketType] = [];
+      }
+      acc[ticketType].push(purchase);
+      return acc;
+    }, {});
+
+    res.render('history', { ticketsByType });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar histórico de compras' });
   }

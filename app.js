@@ -22,23 +22,19 @@ app.use(morgan('dev'));
 app.use(express.static('public'));
 
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:"],
-      connectSrc: ["'self'"],
-      fontSrc: ["'self'"],
-      objectSrc: ["'none'"],
-      mediaSrc: ["'self'"],
-      frameSrc: ["'self'"]
-    },
-  },
+  contentSecurityPolicy: false, // Desativar CSP
+  xssFilter: false // Desativar X-XSS-Protection
 }));
 
 app.use(cors());
 app.use(cookieParser());
+
+// Remover cabeçalhos desnecessários
+app.use((req, res, next) => {
+  res.removeHeader('Content-Security-Policy');
+  res.removeHeader('X-XSS-Protection');
+  next();
+});
 
 // Configuração do Handlebars
 app.engine('handlebars', engine({
